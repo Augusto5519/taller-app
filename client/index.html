@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - Taller Mecánico</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>Mecanica Guiñazu</h3>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" data-section="inicio">Inicio</a>
+                <a href="#" data-section="clientes">Clientes</a>
+                <a href="#" data-section="vehiculos">Vehículos</a>
+                <a href="#" data-section="turnos">Turnos / Reservas</a>
+                <a href="#" data-section="tareas">Órdenes de Trabajo</a>
+                <a href="#" data-section="servicios">Servicios</a>
+                <a href="#" data-section="inventario" class="admin-only">Inventario</a>
+                <a href="#" data-section="reportes" class="admin-only">Reportes</a>
+                <a href="#" data-section="personal" class="admin-only">Personal</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="main-header">
+                <div id="welcome-message"></div>
+                <button id="logout-button">Cambiar de Usuario / Salir</button>
+            </header>
+            <section id="content-area">
+                </section>
+        </main>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script src="js/ui.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+</html>
