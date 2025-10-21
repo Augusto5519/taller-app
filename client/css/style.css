@@ -485,3 +485,7 @@ body {
     color: white;
     border-color: #007bff;
 }
+
+#client-list-container .styled-table {
+    min-width: 700px;
+}

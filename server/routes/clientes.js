@@ -1,56 +1,46 @@
-// Archivo: server/routes/clientes.js
+// Archivo: server/routes/clientes.js 
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 
-// GET /api/clientes - OBTENER todos los clientes
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM clientes ORDER BY apellido, nombre');
-        res.json(rows);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Error del servidor');
-    }
+        const [rows] = await db.query("SELECT * FROM clientes ORDER BY apellido, nombre");
+        res.json(rows || []);
+    } catch (err) { res.status(500).send('Error del servidor'); }
 });
 
-// POST /api/clientes - CREAR un nuevo cliente
+router.get('/:id', async (req, res) => {
+    try {
+        const [rows] = await db.query("SELECT * FROM clientes WHERE id = ?", [req.params.id]);
+        res.json(rows[0] || null);
+    } catch (err) { res.status(500).send('Error del servidor'); }
+});
+
 router.post('/', async (req, res) => {
     const { nombre, apellido, telefono, email, direccion } = req.body;
     try {
-        const query = 'INSERT INTO clientes (nombre, apellido, telefono, email, direccion) VALUES (?, ?, ?, ?, ?)';
-        await db.query(query, [nombre, apellido, telefono, email, direccion]);
-        res.status(201).json({ msg: 'Cliente creado con éxito' });
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Error del servidor');
-    }
+        await db.query('INSERT INTO clientes (nombre, apellido, telefono, email, direccion) VALUES (?, ?, ?, ?, ?)', [nombre, apellido, telefono, email, direccion]);
+        res.status(201).json({ msg: 'Cliente creado' });
+    } catch (err) { res.status(500).send('Error del servidor'); }
 });
 
-// PUT /api/clientes/:id - ACTUALIZAR un cliente existente
 router.put('/:id', async (req, res) => {
     const { nombre, apellido, telefono, email, direccion } = req.body;
-    const { id } = req.params;
     try {
-        const query = 'UPDATE clientes SET nombre = ?, apellido = ?, telefono = ?, email = ?, direccion = ? WHERE id = ?';
-        await db.query(query, [nombre, apellido, telefono, email, direccion, id]);
-        res.json({ msg: 'Cliente actualizado con éxito' });
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Error del servidor');
-    }
+        await db.query('UPDATE clientes SET nombre = ?, apellido = ?, telefono = ?, email = ?, direccion = ? WHERE id = ?', [nombre, apellido, telefono, email, direccion, req.params.id]);
+        res.json({ msg: 'Cliente actualizado' });
+    } catch (err) { res.status(500).send('Error del servidor'); }
 });
 
-// DELETE /api/clientes/:id - ELIMINAR un cliente
 router.delete('/:id', async (req, res) => {
-    const { id } = req.params;
     try {
-        // ¡Cuidado! En una app real, antes de borrar un cliente deberíamos verificar
-        // que no tenga vehículos u órdenes de trabajo asociadas. Por ahora, lo borramos directamente.
-        await db.query('DELETE FROM clientes WHERE id = ?', [id]);
-        res.json({ msg: 'Cliente eliminado con éxito' });
+        await db.query('DELETE FROM clientes WHERE id = ?', [req.params.id]);
+        res.json({ msg: 'Cliente eliminado' });
     } catch (err) {
-        console.error(err.message);
+        if (err.errno === 1451) {
+            return res.status(409).json({ msg: 'Error: No se puede eliminar un cliente con vehículos asociados.' });
+        }
         res.status(500).send('Error del servidor');
     }
 });

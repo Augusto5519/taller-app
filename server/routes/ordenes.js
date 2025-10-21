@@ -1,7 +1,24 @@
-// Archivo: server/routes/ordenes.js
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
+
+// RUTA para obtener todos los datos para el formulario
+router.get('/form-data', async (req, res) => {
+    try {
+        const [clientes] = await db.query("SELECT id, nombre, apellido FROM clientes ORDER BY apellido, nombre");
+        const [vehiculos] = await db.query("SELECT id, cliente_id, marca, modelo, patente FROM vehiculos");
+        const [tecnicos] = await db.query("SELECT id, nombre_completo FROM usuarios WHERE rol = 'empleado'");
+        
+        res.json({
+            clientes: clientes || [],
+            vehiculos: vehiculos || [],
+            tecnicos: tecnicos || []
+        });
+    } catch (err) {
+        console.error("Error al obtener datos para el formulario de orden:", err);
+        res.status(500).send('Error del servidor');
+    }
+});
 
 // GET /api/ordenes - Obtener todas las órdenes
 router.get('/', async (req, res) => {
