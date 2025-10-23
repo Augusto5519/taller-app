@@ -7,12 +7,16 @@ const bcrypt = require('bcryptjs');
 // GET /api/usuarios - Listar todos los usuarios
 router.get('/', async (req, res) => {
     try {
+        // Usa el nombre de columna correcto: "usuario"
         const [rows] = await db.query("SELECT id, nombre_completo, usuario, rol FROM usuarios");
         res.json(rows || []);
-    } catch (err) { res.status(500).send('Error del servidor'); }
+    } catch (err) { 
+        console.error("Error en GET /api/usuarios:", err);
+        res.status(500).send('Error del servidor'); 
+    }
 });
 
-// GET /api/usuarios/tecnicos - OBTENER SOLO TÉCNICOS
+// GET /api/usuarios/tecnicos - RUTA ESPECÍFICA 
 router.get('/tecnicos', async (req, res) => {
     try {
         const [rows] = await db.query("SELECT id, nombre_completo FROM usuarios WHERE rol = 'empleado'");
@@ -23,7 +27,7 @@ router.get('/tecnicos', async (req, res) => {
     }
 });
 
-// GET /api/usuarios/:id - Obtener un solo usuario por ID
+// GET /api/usuarios/:id - RUTA GENERAL 
 router.get('/:id', async (req, res) => {
     try {
         const [rows] = await db.query("SELECT id, nombre_completo, usuario, rol FROM usuarios WHERE id = ?", [req.params.id]);
@@ -37,6 +41,7 @@ router.post('/', async (req, res) => {
     try {
         const salt = await bcrypt.genSalt(10);
         const contrasenaEncriptada = await bcrypt.hash(contrasena, salt);
+        // Usa el nombre de columna correcto: "usuario"
         const query = 'INSERT INTO usuarios (nombre_completo, usuario, contrasena, rol) VALUES (?, ?, ?, "empleado")';
         await db.query(query, [nombre_completo, usuario, contrasenaEncriptada]);
         res.status(201).json({ msg: 'Empleado creado con éxito' });

@@ -1,42 +1,52 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('login-form');
-    const errorMessage = document.getElementById('error-message');
+// Archivo: server/routes/auth.js 
+const express = require('express');
+const router = express.Router();
+const db = require('../config/db');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-    // Si ya hay un token, redirigir al dashboard
-    if (localStorage.getItem('token')) {
-        window.location.href = 'index.html';
-    }
+router.post('/login', async (req, res) => {
+    const { nombre_usuario, contrasena } = req.body;
 
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Evitar que la página se recargue
+    try {
+        const query = 'SELECT * FROM usuarios WHERE usuario = ?';
+        const [users] = await db.query(query, [nombre_usuario]);
 
-        const nombre_usuario = document.getElementById('username').value;
-        const contrasena = document.getElementById('password').value;
-
-        try {
-            const response = await fetch('http://localhost:5000/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ nombre_usuario, contrasena })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.msg || 'Error al iniciar sesión');
-            }
-
-            // Guardar el token y los datos del usuario en el navegador
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('usuario', JSON.stringify(data.usuario));
-
-            // Redirigir a la página principal
-            window.location.href = 'index.html';
-
-        } catch (error) {
-            errorMessage.textContent = error.message;
+        if (users.length === 0) {
+            return res.status(400).json({ msg: 'Usuario o contraseña incorrectos' });
         }
-    });
+
+        const user = users[0];
+        const isMatch = await bcrypt.compare(contrasena, user.contrasena);
+
+        if (!isMatch) {
+            return res.status(400).json({ msg: 'Usuario o contraseña incorrectos' });
+        }
+
+        const payload = {
+            usuario: {
+                id: user.id,
+                nombre: user.nombre_completo,
+                rol: user.rol
+            }
+        };
+
+        jwt.sign(
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: '5h' },
+            (err, token) => {
+                if (err) throw err;
+                res.json({
+                    token,
+                    usuario: payload.usuario
+                });
+            }
+        );
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Error del servidor');
+    }
 });
+
+module.exports = router;

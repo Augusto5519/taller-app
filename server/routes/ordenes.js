@@ -60,11 +60,11 @@ router.post('/', async (req, res) => {
 
 // PUT /api/ordenes/:id - Actualizar una orden
 router.put('/:id', async (req, res) => {
-    const { tecnico_id, estado, descripcion_problema, tiempo_estimado } = req.body;
+    const { tecnico_id, estado, descripcion_problema, tiempo_estimado, costo_total } = req.body;
     const tecnico = tecnico_id ? tecnico_id : null;
     try {
-        const query = 'UPDATE ordenes_trabajo SET tecnico_id = ?, estado = ?, descripcion_problema = ?, tiempo_estimado = ? WHERE id = ?';
-        await db.query(query, [tecnico, estado, descripcion_problema, tiempo_estimado, req.params.id]);
+        const query = 'UPDATE ordenes_trabajo SET tecnico_id = ?, estado = ?, descripcion_problema = ?, tiempo_estimado = ?, costo_total = ? WHERE id = ?';
+        await db.query(query, [tecnico, estado, descripcion_problema, tiempo_estimado, costo_total, req.params.id]);
         res.json({ msg: 'Orden de trabajo actualizada' });
     } catch (err) {
         console.error(err.message);

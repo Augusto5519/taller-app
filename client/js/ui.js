@@ -1,35 +1,20 @@
-// Archivo: client/js/ui.js 
+// Archivo: client/js/ui.js
 
 function renderInicio() {
-    return `
-        <h2>Dashboard Principal</h2>
-        <div class="dashboard-stats-grid">
-            <div class="stat-card"><h3>Órdenes Abiertas</h3><p id="stat-ordenes">...</p></div>
-            <div class="stat-card"><h3>Turnos para Hoy</h3><p id="stat-turnos">...</p></div>
-            <div class="stat-card"><h3>Alertas de Stock</h3><p id="stat-stock">...</p></div>
-        </div>
-        <div class="chart-container">
-            <h3>Resumen General</h3>
-            <canvas id="myChart"></canvas>
-        </div>
-    `;
+    return `<h2>Dashboard Principal</h2><div class="dashboard-stats-grid"><div class="stat-card"><h3>Órdenes Abiertas</h3><p id="stat-ordenes">...</p></div><div class="stat-card"><h3>Turnos para Hoy</h3><p id="stat-turnos">...</p></div><div class="stat-card"><h3>Alertas de Stock</h3><p id="stat-stock">...</p></div></div><div class="chart-container"><h3>Resumen General</h3><canvas id="myChart"></canvas></div>`;
 }
 
 function renderServicios() {
-    return `
-        <h2>Gestión de Servicios</h2>
-        <p>Aquí puedes ver y administrar los servicios que ofrece el taller.</p>
-        <div id="service-list-container"><p>Cargando servicios...</p></div>
-    `;
+    return `<h2>Gestión de Servicios</h2><p>Aquí puedes ver y administrar los servicios que ofrece el taller.</p><div id="service-list-container"><p>Cargando servicios...</p></div>`;
 }
 
 function renderClientes() {
     return `
         <h2>Gestión de Clientes</h2>
         <button id="add-client-btn" class="btn-submit" style="width: auto; margin-bottom: 20px;">Añadir Nuevo Cliente</button>
-
+        
         <div class="filter-controls">
-            <input type="text" id="search-input" placeholder="Buscar por nombre, apellido, teléfono, email...">
+            <input type="text" id="search-input-clientes" placeholder="Buscar por nombre, apellido, teléfono, email...">
         </div>
 
         <div id="client-list-container">
@@ -37,18 +22,15 @@ function renderClientes() {
         </div>
     `;
 }
+
 function renderVehiculos() {
     return `
         <h2>Gestión de Vehículos</h2>
         <button id="add-vehicle-btn" class="btn-submit" style="width: auto; margin-bottom: 20px;">Añadir Nuevo Vehículo</button>
-        
         <div class="filter-controls">
             <input type="text" id="search-input-vehiculos" placeholder="Buscar por patente, marca, modelo, propietario...">
         </div>
-
-        <div id="vehicle-list-container">
-            <p>Cargando vehículos...</p>
-        </div>
+        <div id="vehicle-list-container"><p>Cargando vehículos...</p></div>
     `;
 }
 
@@ -57,7 +39,7 @@ function renderOrdenes() {
         <h2>Órdenes de Trabajo</h2>
         <button id="add-order-btn" class="btn-submit" style="width: auto; margin-bottom: 20px;">Crear Nueva Orden</button>
         <div class="filter-controls">
-            <input type="text" id="search-input" placeholder="Buscar por patente, cliente, marca...">
+            <input type="text" id="search-input-tareas" placeholder="Buscar por patente, cliente, marca...">
             <div class="filter-buttons">
                 <button data-status="todas" class="active">Todas</button>
                 <button data-status="abierta">Abiertas</button>
@@ -124,7 +106,7 @@ function renderOrderForm(orden = {}, clientes = [], vehiculos = [], tecnicos = [
     let optionsClientes = (clientes || []).map(c => `<option value="${c.id}" ${orden.cliente_id == c.id ? 'selected' : ''}>${c.apellido}, ${c.nombre}</option>`).join('');
     let optionsVehiculos = (vehiculos || []).filter(v => v.cliente_id == orden.cliente_id).map(v => `<option value="${v.id}" ${orden.vehiculo_id == v.id ? 'selected' : ''}>${v.marca} ${v.modelo} (${v.patente})</option>`).join('');
     let optionsTecnicos = (tecnicos || []).map(t => `<option value="${t.id}" ${orden.tecnico_id == t.id ? 'selected' : ''}>${t.nombre_completo}</option>`).join('');
-    return `<div id="order-modal" class="modal"><div class="modal-content"><span class="close-button">&times;</span><h2>${isEditing ? 'Editar Orden' : 'Crear Orden'}</h2><form id="form-orden" class="form-layout"><input type="hidden" name="id" value="${orden.id || ''}"><div class="form-group"><label for="orden-cliente">Cliente</label><select id="orden-cliente" name="cliente_id" ${isEditing ? 'disabled' : ''} required><option value="">Seleccione...</option>${optionsClientes}</select></div><div class="form-group"><label for="orden-vehiculo">Vehículo</label><select id="orden-vehiculo" name="vehiculo_id" ${isEditing ? 'disabled' : ''} required><option value="">${isEditing ? '' : 'Seleccione cliente...'}</option>${optionsVehiculos}</select></div><div class="form-group"><label for="orden-descripcion">Problema</label><textarea id="orden-descripcion" name="descripcion_problema" rows="3" required>${orden.descripcion_problema || ''}</textarea></div><div class="form-group"><label for="orden-tecnico">Técnico</label><select id="orden-tecnico" name="tecnico_id"><option value="">Sin asignar</option>${optionsTecnicos}</select></div><div class="form-group"><label for="orden-estado">Estado</label><select id="orden-estado" name="estado" required><option value="abierta" ${orden.estado === 'abierta' ? 'selected' : ''}>Abierta</option><option value="en_proceso" ${orden.estado === 'en_proceso' ? 'selected' : ''}>En Proceso</option><option value="finalizada" ${orden.estado === 'finalizada' ? 'selected' : ''}>Finalizada</option><option value="cancelada" ${orden.estado === 'cancelada' ? 'selected' : ''}>Cancelada</option></select></div><div class="form-group"><label for="orden-tiempo">Tiempo Estimado</label><input type="text" id="orden-tiempo" name="tiempo_estimado" value="${orden.tiempo_estimado || ''}"></div><button type="submit" class="btn-submit">${isEditing ? 'Actualizar' : 'Crear'}</button></form></div></div>`;
+    return `<div id="order-modal" class="modal"><div class="modal-content"><span class="close-button">&times;</span><h2>${isEditing ? 'Editar Orden' : 'Crear Orden'}</h2><form id="form-orden" class="form-layout"><input type="hidden" name="id" value="${orden.id || ''}"><div class="form-group"><label for="orden-cliente">Cliente</label><select id="orden-cliente" name="cliente_id" ${isEditing ? 'disabled' : ''} required><option value="">Seleccione...</option>${optionsClientes}</select></div><div class="form-group"><label for="orden-vehiculo">Vehículo</label><select id="orden-vehiculo" name="vehiculo_id" ${isEditing ? 'disabled' : ''} required><option value="">${isEditing ? '' : 'Seleccione cliente...'}</option>${optionsVehiculos}</select></div><div class="form-group"><label for="orden-descripcion">Problema</label><textarea id="orden-descripcion" name="descripcion_problema" rows="3" required>${orden.descripcion_problema || ''}</textarea></div><div class="form-group"><label for="orden-tecnico">Técnico</label><select id="orden-tecnico" name="tecnico_id"><option value="">Sin asignar</option>${optionsTecnicos}</select></div><div class="form-group"><label for="orden-estado">Estado</label><select id="orden-estado" name="estado" required><option value="abierta" ${orden.estado === 'abierta' ? 'selected' : ''}>Abierta</option><option value="en_proceso" ${orden.estado === 'en_proceso' ? 'selected' : ''}>En Proceso</option><option value="finalizada" ${orden.estado === 'finalizada' ? 'selected' : ''}>Finalizada</option><option value="cancelada" ${orden.estado === 'cancelada' ? 'selected' : ''}>Cancelada</option></select></div><div class="form-group"><label for="orden-tiempo">Tiempo Estimado</label><input type="text" id="orden-tiempo" name="tiempo_estimado" value="${orden.tiempo_estimado || ''}"></div><div class="form-group"><label for="orden-costo">Costo Total ($)</label><input type="number" step="0.01" id="orden-costo" name="costo_total" value="${orden.costo_total || '0.00'}"></div><button type="submit" class="btn-submit">${isEditing ? 'Actualizar' : 'Crear'}</button></form></div></div>`;
 }
 
 function renderTurnoForm(turno = {}) {
@@ -140,4 +122,36 @@ function renderInventoryForm(item = {}) {
 function renderPersonalForm(user = {}) {
     const isEditing = !!user.id;
     return `<div id="personal-modal" class="modal"><div class="modal-content"><span class="close-button">&times;</span><h2>${isEditing ? 'Editar Empleado' : 'Añadir Empleado'}</h2><form id="form-personal" class="form-layout"><input type="hidden" name="id" value="${user.id || ''}"><div class="form-group"><label for="personal-nombre">Nombre Completo</label><input type="text" id="personal-nombre" name="nombre_completo" value="${user.nombre_completo || ''}" required></div><div class="form-group"><label for="personal-usuario">Usuario</label><input type="text" id="personal-usuario" name="usuario" value="${user.usuario || ''}" required></div><div class="form-group"><label for="personal-contrasena">Contraseña</label><input type="password" id="personal-contrasena" name="contrasena" placeholder="${isEditing ? 'Dejar en blanco para no cambiar' : ''}"></div><button type="submit" class="btn-submit">${isEditing ? 'Actualizar' : 'Guardar'}</button></form></div></div>`;
+}
+
+function renderCuentaCliente() {
+    return `
+        <div class="cuenta-header">
+            <h2 id="cuenta-cliente-nombre">Cargando...</h2>
+            <div class="stat-card" style="background-color: #e6f7ff; border: 1px solid #91d5ff;">
+                <h3>Saldo Actual</h3>
+                <p id="cuenta-saldo-actual" style="color: #0056b3;">$ 0.00</p>
+            </div>
+        </div>
+        <div class="turnos-layout" style="align-items: flex-start; gap: 40px;">
+            <div class="list-wrapper">
+                <div class="report-container">
+                    <h3>Historial de Movimientos</h3>
+                    <div id="historial-container"><p>Cargando historial...</p></div>
+                </div>
+            </div>
+            <div class="form-wrapper">
+                <div class="report-container">
+                    <h3>Registrar Nuevo Pago</h3>
+                    <form id="form-pago" class="form-layout" style="box-shadow: none; padding: 0;">
+                        <div class="form-group"><label for="pago-monto">Monto ($)</label><input type="number" step="0.01" id="pago-monto" name="monto" required></div>
+                        <div class="form-group"><label for="pago-fecha">Fecha del Pago</label><input type="date" id="pago-fecha" name="fecha_pago" required></div>
+                        <div class="form-group"><label for="pago-metodo">Método de Pago</label><input type="text" id="pago-metodo" name="metodo_pago" placeholder="Ej: Efectivo, Transferencia"></div>
+                        <button type="submit" class="btn-submit">Registrar Pago</button>
+                    </form>
+                    <div id="pago-mensaje"></div>
+                </div>
+            </div>
+        </div>
+    `;
 }

@@ -19,6 +19,7 @@ app.use('/api/inventario', require('./routes/inventario'));
 app.use('/api/reportes', require('./routes/reportes'));
 app.use('/api/usuarios', require('./routes/usuarios'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/cuentas', require('./routes/cuentas'));
 
 // Puerto en el que correrá el servidor
 const PORT = process.env.PORT || 5000;

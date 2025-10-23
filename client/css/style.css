@@ -489,3 +489,46 @@ body {
 #client-list-container .styled-table {
     min-width: 700px;
 }
+
+/*Estilos para la página de Cuenta Corriente */
+
+/* Mejora del saldo principal */
+.cuenta-header .stat-card p {
+    font-size: 36px; 
+    font-weight: bold;
+}
+
+/* Color para saldo deudor */
+.saldo-deudor {
+    color: #d9534f !important; 
+}
+
+/* Color para saldo a favor (positivo o cero) */
+.saldo-acreedor {
+    color: #5cb85c !important; 
+}
+
+/* Estilos para la tabla de historial */
+#historial-container .styled-table td {
+    vertical-align: middle;
+}
+
+/* Alineación y color para la columna "Debe" */
+.historial-debe {
+    color: #d9534f;
+    font-weight: bold;
+    text-align: right;
+}
+
+/* Alineación y color para la columna "Pagos" */
+.historial-haber {
+    color: #5cb85c;
+    font-weight: bold;
+    text-align: right;
+}
+
+/* Alineación para la columna "Saldo" */
+.historial-saldo {
+    text-align: right;
+    font-weight: bold;
+}
