@@ -2,26 +2,26 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Taller Mecánico</title>
     <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
     <div class="login-container">
-        <img src="images/logo-taller.png" alt="Logo Taller" class="logo">
-        <h2>Acceso al Sistema</h2>
-        <form id="login-form">
-            <div class="form-group">
-                <label for="username">Usuario</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">Ingresar</button>
-            <p id="error-message" class="error"></p>
-        </form>
+        <div class="login-box">
+            <h2>Acceso al Sistema</h2>
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn-login">Ingresar</button>
+            </form>
+            <div id="error-message" class="error-message"></div>
+        </div>
     </div>
     <script src="js/auth.js"></script>
 </body>

@@ -1,46 +1,50 @@
+// Archivo: server/routes/auth.js 
 const express = require('express');
+const router = express.Router();
+const db = require('../config/db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const db = require('../config/db');
-const router = express.Router();
 
 router.post('/login', async (req, res) => {
+
     const { nombre_usuario, contrasena } = req.body;
 
-    if (!nombre_usuario || !contrasena) {
-        return res.status(400).json({ msg: 'Por favor, ingrese todos los campos.' });
-    }
-
     try {
-        const [rows] = await db.query('SELECT * FROM usuarios WHERE nombre_usuario = ?', [nombre_usuario]);
 
-        if (rows.length === 0) {
-            return res.status(400).json({ msg: 'Usuario no encontrado.' });
+        const query = 'SELECT * FROM usuarios WHERE usuario = ?';
+        const [users] = await db.query(query, [nombre_usuario]);
+
+        if (users.length === 0) {
+            return res.status(400).json({ msg: 'Usuario o contraseña incorrectos' });
         }
 
-        const usuario = rows[0];
-
-        // Comparar contraseña ingresada con la encriptada en la DB
-        const isMatch = await bcrypt.compare(contrasena, usuario.contrasena);
+        const user = users[0];
+        const isMatch = await bcrypt.compare(contrasena, user.contrasena);
 
         if (!isMatch) {
-            return res.status(400).json({ msg: 'Contraseña incorrecta.' });
+            return res.status(400).json({ msg: 'Usuario o contraseña incorrectos' });
         }
 
-        // Crear y firmar un token
         const payload = {
             usuario: {
-                id: usuario.id,
-                rol: usuario.rol,
-                nombre: usuario.nombre_completo
+                id: user.id,
+                nombre: user.nombre_completo,
+                rol: user.rol
             }
         };
 
-        jwt.sign(payload, 'tu_secreto_jwt_super_secreto', { expiresIn: '8h' }, (err, token) => {
-            if (err) throw err;
-            res.json({ token, usuario: payload.usuario });
-        });
-
+        jwt.sign(
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: '5h' },
+            (err, token) => {
+                if (err) throw err;
+                res.json({
+                    token,
+                    usuario: payload.usuario
+                });
+            }
+        );
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Error del servidor');
